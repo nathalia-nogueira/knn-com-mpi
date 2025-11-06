@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#define SHOW_DECREASE_MAX_STEPS 0
+#define SHOW_DECREASE_MAX_STEPS 1
 #define MAX_HEAP_SIZE (1024*1024)
 #define parent(pos) ( (pos-1)/2 )
 

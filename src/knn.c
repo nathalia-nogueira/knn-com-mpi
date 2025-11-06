@@ -16,8 +16,8 @@ int distanceSquared(int firstPoint[], int secondPoint[], int dimension) {
 
 /* -------------------------- Core functions --------------------------*/
 // Computes the k nearest neighbors of each point in Q with respect to P.
-int **knn(int Q[], int nq, int P[], int np, int d, int k) {
-    int **result = allocateZeroedMatrix(nq, k);
+int *knn(int Q[], int nq, int P[], int np, int d, int k) {
+    int *result = allocateZeroedArray(nq * k);
     int *heap, *heapIndices;
     int heapSize, distance;
     int *qPoint, *pPoint;
@@ -45,7 +45,7 @@ int **knn(int Q[], int nq, int P[], int np, int d, int k) {
 
         // Copy the k nearest neighbors of Q[i] to row i of the result matrix.
         for (int p = 0; p < heapSize; p++) {
-            result[i][p] = heapIndices[p];
+            result[i * k + p] = heapIndices[p];
         }
 
         destroyArray(heap);

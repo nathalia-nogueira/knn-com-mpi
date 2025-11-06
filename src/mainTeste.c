@@ -20,17 +20,17 @@ int main() {
     int d  = 2;  
     int k  = 2;
 
-    int **result = knn(Q_data, nq, P_data, np, d, k);
+    int *result = knn(Q_data, nq, P_data, np, d, k);
 
     printf("k nearest neighbors (indices in P):\n");
     for (int i = 0; i < nq; i++) {
         printf("Q[%d]: ", i);
         for (int j = 0; j < k; j++)
-            printf("%d ", result[i][j]);
+            printf("%d ", result[i * k + j]);
         printf("\n");
     }
 
-    destroyMatrix(result, nq);
+    destroyArray(result);
 
     return 0;
 }
