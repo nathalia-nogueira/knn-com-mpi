@@ -3,14 +3,14 @@
 #include "knn.h"
 
 int main() {
-    int P_data[] = {
+    float P_data[] = {
         1, 2,
         2, 4,
         5, 7,
         8, 9
     };
 
-    int Q_data[] = {
+    float Q_data[] = {
         2, 3,
         6, 8
     };

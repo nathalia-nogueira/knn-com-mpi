@@ -23,7 +23,7 @@ int **allocateZeroedMatrix(int rows, int columns){
     return matrix;
 }
 
-int *allocateZeroedArray(int numElements) {
+int *allocateZeroedIntArray(int numElements) {
     int *array = (int*) malloc(numElements * sizeof(int));
 
     if (!array) {
@@ -38,13 +38,38 @@ int *allocateZeroedArray(int numElements) {
     return array;
 }
 
-void destroyMatrix(int **matrix, int rows) {
+float *allocateZeroedFloatArray(int numElements) {
+    float *array = (float*) malloc(numElements * sizeof(float));
+
+    if (!array) {
+        printf("[allocateArray] error in malloc.\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < numElements; i++) {
+        array[i] = 0;
+    }
+    
+    return array;
+}
+
+void geraConjuntoDeDados(float *C, int nc, int d) {
+
+    //srand(time(NULL)); // mudar pra time
+    
+    for (int i = 0; i < nc * d; i++) {
+        C[i] = rand() % 10; // numeros aleatorios entre 0 e RAND_MAX (2.147.483.647)
+    }
+    
+}
+
+void destroyMatrix(void **matrix, int rows) {
     for (int i = 0; i < rows; i++) {
         free(matrix[i]);
     }
     free(matrix);
 }
 
-void destroyArray(int *array) {
+void destroyArray(void *array) {
     free(array);
 }

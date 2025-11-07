@@ -9,7 +9,7 @@
 // para compilar:
 // gcc -O3 max-heap.c -o max-heap -lm
 
-void drawHeapTreeV0(int heap[], int size, int nLevels) {
+void drawHeapTreeV0(float heap[], int size, int nLevels) {
     int offset = 0;
         
     int nElements = 1;
@@ -17,7 +17,7 @@ void drawHeapTreeV0(int heap[], int size, int nLevels) {
         
         // print all elements in this level     
         for(int i = offset; i < size && i<(offset+nElements); i++) {
-            printf( "[%3d]", heap[i] );   
+            printf( "[%.2f]", heap[i] );   
         }   
         printf( "\n" );
         
@@ -31,7 +31,7 @@ void printNSpaces(int n) {
         printf(" ");
 }
 
-void drawHeapTree(int heap[], int size, int nLevels) {
+void drawHeapTree(float heap[], int size, int nLevels) {
     int offset = 0;
     
     int nElements = 1;
@@ -40,7 +40,7 @@ void drawHeapTree(int heap[], int size, int nLevels) {
         // print all elements in this level     
         for (int i = offset; i < size && i < (offset+nElements); i++) {
             printNSpaces(((pow(2,nLevels-1-level))*2)-2);
-            printf("[%2d]", heap[i]);
+            printf("[%.2f]", heap[i]);
             printNSpaces(((pow(2,nLevels-1-level))*2)-2);
         }   
         printf("\n");
@@ -50,13 +50,19 @@ void drawHeapTree(int heap[], int size, int nLevels) {
     }
 }
 
-void swap(int *a, int *b) {
+void swap_floats(float *a, float *b) {
+    float temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void swap_ints(int *a, int *b) {
     int temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void maxHeapify(int heap[], int size, int i, int heapIndices[]) {
+void maxHeapify(float heap[], int size, int i, int heapIndices[]) {
     while (1) {
         int largest = i;
         int left = 2 * i + 1;
@@ -69,8 +75,8 @@ void maxHeapify(int heap[], int size, int i, int heapIndices[]) {
             largest = right;
 
         if (largest != i) {
-            swap(&heap[i], &heap[largest]);
-            swap(&heapIndices[i], &heapIndices[largest]);
+            swap_floats(&heap[i], &heap[largest]);
+            swap_ints(&heapIndices[i], &heapIndices[largest]);
             i = largest;
         } else {
             break;
@@ -78,8 +84,8 @@ void maxHeapify(int heap[], int size, int i, int heapIndices[]) {
     }
 }
 
-void heapifyUp(int heap[], int *size, int pos, int heapIndices[]) {
-    int val = heap[pos];
+void heapifyUp(float heap[], int *size, int pos, int heapIndices[]) {
+    float val = heap[pos];
     int index = heapIndices[pos];
 
     while (pos > 0 && val > heap[parent(pos)]) {
@@ -92,7 +98,7 @@ void heapifyUp(int heap[], int *size, int pos, int heapIndices[]) {
     heapIndices[pos] = index;
 }
         
-void insert(int heap[], int *size, int element, int heapIndices[], int origIndex) {
+void insert(float heap[], int *size, float element, int heapIndices[], int origIndex) {
     *size += 1;
     int last = *size - 1;
      
@@ -101,19 +107,19 @@ void insert(int heap[], int *size, int element, int heapIndices[], int origIndex
     heapifyUp(heap, size, last, heapIndices);
 }   
 
-int isMaxHeap(int heap[], int size) {   
+int isMaxHeap(float heap[], int size) {   
     for (int i=1; i<size; i++ )
         if (heap[i] <= heap[parent(i)]) {
             continue;
         } else {
-            printf("\nbroke at [%d]=%d\n", i, heap[i]);
-            printf("father at [%d]=%d\n", parent(i), heap[parent(i)]);
+            printf("\nbroke at [%d]=%.2f\n", i, heap[i]);
+            printf("father at [%d]=%.2f\n", parent(i), heap[parent(i)]);
            return 0;
         }   
     return 1;       
 }
 
-void decreaseMax(int heap[], int size, int new_value, int heapIndices[], int origIndex) {
+void decreaseMax(float heap[], int size, float new_value, int heapIndices[], int origIndex) {
     if (size == 0) 
         return;
 
@@ -122,7 +128,7 @@ void decreaseMax(int heap[], int size, int new_value, int heapIndices[], int ori
         heapIndices[0] = origIndex;
         #if SHOW_DECREASE_MAX_STEPS 
             int nLevels = (int)log2(size) + 1;
-            printf("-------------- heap after decreasing top to %d\n", new_value);
+            printf("-------------- heap after decreasing top to %.2f\n", new_value);
             drawHeapTree(heap, size, nLevels);
             printf("    ~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         #endif

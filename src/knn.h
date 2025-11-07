@@ -15,6 +15,6 @@
  * - d: dimensionality of the points.
  * - k: number of nearest neighbors to return.
  */
-int *knn(int Q[], int nq, int P[], int np, int d, int k);
+int *knn(float Q[], int nq, float P[], int np, int d, int k);
 
 #endif
