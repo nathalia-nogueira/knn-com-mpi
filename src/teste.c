@@ -6,7 +6,7 @@
 #include <mpi.h>
 #include "chrono.h"
 
-#define PRINT_DATA 1
+#define PRINT_DATA 0
 
 chronometer_t knnTime;
 
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     int nProc, procID;
     int root = 0;
     int params[4];
-    chronoReset(&knnTime);
+    
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nProc);
@@ -61,8 +61,8 @@ int main(int argc, char** argv) {
     int totalSize_Q = params[0] * params[2]; // numero total de elementos do conjunto Q
     int totalSize_R = params[0] * params[3]; // numero total de elementos do conjunto R
     int numPoints = params[0] / nProc; 
-    int localSize_Q = numPontos * params[2]; // Tamanho de cada sub-array a ser distribuído
-    int localSize_R = numPontos * params[3]; // numero de elementos do conjunto R de cada rank
+    int localSize_Q = numPoints * params[2]; // Tamanho de cada sub-array a ser distribuído
+    int localSize_R = numPoints * params[3]; // numero de elementos do conjunto R de cada rank
 
     // Buffers
     float* sendBuf_Q; // dados enviados pelo scatter
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
         printf("Processo %d recebeu: paraemtros: nq= %d , npp= %d , d= %d , k= %d \n", procID, params[0], params[1], params[2], params[3]);
 
         printf("Processo %d recebeu: Q: \n", procID);
-        for (int i = 0; i < numPontos; i++) {
+        for (int i = 0; i < numPoints; i++) {
             for (int j = 0; j < params[2]; j++) 
                 printf("%.2f ", recvBufScatter_Q[i * params[2] + j]);
             printf("\n");
@@ -131,28 +131,32 @@ int main(int argc, char** argv) {
         }
     #endif
 
-    // 
+
     int *result = allocateZeroedIntArray(localSize_R);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    chronoReset(&knnTime);
     chronoStart(&knnTime);
 
-    result = knn(recvBufScatter_Q, numPontos, sendBuf_P, params[1], params[2], params[3]);
+    result = knn(recvBufScatter_Q, numPoints, sendBuf_P, params[1], params[2], params[3]);
 
     chronoStop(&knnTime);
-    chronoReportTime(&knnTime, "knnTime");
+    //chronoReportTime(&knnTime, "knnTime");
 
     double totalTimeInSeconds = (double)chronoGetTotal(&knnTime) / ((double)1000 * 1000 * 1000);
-    printf("totalTimeInSeconds: %lf s\n", totalTimeInSeconds);
+    printf("Rank %d -> totalTimeInSeconds: %lf s\n", procID, totalTimeInSeconds);
 
-    printf("Processo %d: k nearest neighbors (indices in P):\n", procID);
-    for (int i = 0; i < numPontos; i++) {
-        printf("Q[%d]: ", i);
-        for (int j = 0; j < params[3]; j++)
-            printf("%d ", result[i * params[3] + j]);
+    #if PRINT_DATA
+        printf("Processo %d: k nearest neighbors (indices in P):\n", procID);
+        for (int i = 0; i < numPoints; i++) {
+            printf("Q[%d]: ", i);
+            for (int j = 0; j < params[3]; j++)
+                printf("%d ", result[i * params[3] + j]);
+            printf("\n");
+        }
         printf("\n");
-    }
-    printf("\n");
-    //MPI_Barrier(MPI_COMM_WORLD);
+    #endif
     
 
     // depois de processados, envia os dados para o root
@@ -167,14 +171,16 @@ int main(int argc, char** argv) {
                root,            // Rank do processo root
                MPI_COMM_WORLD);
 
-    // ---- Resultados ----
-    if (procID == root) {
-        printf("\nProcesso raiz (rank %d) após gather, buffer: [", procID);
-        for (int i = 0; i < totalSize_R; i++) {
-            printf("%d ", recvBufGather_R[i]);
+    #if PRINT_DATA
+        // ---- Resultados ----
+        if (procID == root) {
+            printf("\nProcesso raiz (rank %d) após gather, buffer: [", procID);
+            for (int i = 0; i < totalSize_R; i++) {
+                printf("%d ", recvBufGather_R[i]);
+            }
+            printf("]\n\n");
         }
-        printf("]\n\n");
-    }
+    #endif
 
     // Libera a memória
     if (procID == root) {

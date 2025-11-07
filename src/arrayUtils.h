@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 void geraConjuntoDeDados(float *C, int nc, int d);
 int **allocateZeroedMatrix(int rows, int columns);
