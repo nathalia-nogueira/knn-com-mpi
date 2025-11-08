@@ -1,7 +1,7 @@
-TARGET = knn
-CC = gcc
-CFLAGS = -Wall -lm
-SRC = mainTeste.c maxHeap.c knn.c arrayUtils.c
+TARGET = main
+CC = mpicc
+CFLAGS = -Wall -lm -O3
+SRC = main.c maxHeap.c knn.c arrayUtils.c chrono.c
 
 $(TARGET): $(SRC)
 	$(CC) $(SRC) -o $(TARGET) $(CFLAGS)

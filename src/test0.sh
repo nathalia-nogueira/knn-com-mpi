@@ -3,8 +3,5 @@
 #Experiencia 1:
 # Rodar o programa para APENAS 1 processo MPI e medir o tempo da computaçao de knn
 
-for i in {1..5}  # 10 vezes cada
-do
-    echo "-------- EXECUCAO $i --------"
-    mpirun -np 1 ./main nq=128 npp=400000 d=300 k=1024
-done
+echo "-------- EXECUÇÃO 1 --------"
+mpirun -np 1 ./main nq=128 npp=400000 d=300 k=1024

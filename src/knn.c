@@ -28,9 +28,6 @@ int *knn(float Q[], int nq, float P[], int np, int d, int k) {
     heapIndices = allocateZeroedIntArray(k);
 
     for (int i = 0; i < nq; i++) {
-        
-        memset(heap, 0, sizeof(heap));
-        memset(heapIndices, 0, sizeof(heapIndices));
         heapSize = 0;
 
         qPoint = Q + i * d;
@@ -50,10 +47,8 @@ int *knn(float Q[], int nq, float P[], int np, int d, int k) {
         }
 
         // Copy the k nearest neighbors of Q[i] to row i of the result matrix.
-        //int l = heapSize - 1;
         for (int p = 0; p < heapSize; p++) {
             result[i * k + p] = heapIndices[p];
-            //l--;
         }
 
     }

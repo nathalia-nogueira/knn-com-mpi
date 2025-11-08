@@ -5,5 +5,5 @@
 
 for i in {1..10}  # 10 vezes cada
 do
-    mpirun -np 8 ./teste nq=128 npp=400000 d=300 k=1024
+    mpirun -np 8 ./main nq=128 npp=400000 d=300 k=1024
 done

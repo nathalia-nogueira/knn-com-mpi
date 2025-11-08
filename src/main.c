@@ -1,23 +1,20 @@
+// mpirun -np 4 ./main nq=n1 npp=n2 d=n3 k=n4
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "arrayUtils.h"
-#include "knn.h"
 #include <mpi.h>
-#include "chrono.h"
 
-#define PRINT_DATA 0
+#include "knn.h"
+#include "arrayUtils.h"
 
-chronometer_t knnTime;
+#define PRINT_DATA 1
 
 int main(int argc, char** argv) {
-
-    // mpirun -np 4 knn-mpi nq=n1 npp=n2 d=n3 k=n4
     int nProc, procID;
     int root = 0;
     int params[4];
     
-
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nProc);
     MPI_Comm_rank(MPI_COMM_WORLD, &procID);
@@ -65,7 +62,7 @@ int main(int argc, char** argv) {
     int localSize_R = numPoints * params[3]; // numero de elementos do conjunto R de cada rank
 
     // Buffers
-    float* sendBuf_Q; // dados enviados pelo scatter
+    float* sendBuf_Q = NULL; // dados enviados pelo scatter
     float* sendBuf_P = (float*)malloc(totalSize_P * sizeof(float)); // dados enviados por broadcast
     float* recvBufScatter_Q = (float*)malloc(localSize_Q * sizeof(float)); // dados recebidos pelo scatter
     int* recvBufGather_R = NULL; // dados recebidos pelo gather
@@ -97,8 +94,21 @@ int main(int argc, char** argv) {
         recvBufGather_R = (int*)malloc(totalSize_R * sizeof(int));
     }
 
-    MPI_Bcast(sendBuf_P, totalSize_P, MPI_FLOAT, root, MPI_COMM_WORLD);
+    double sendT0 = 0;
+    if (procID == root) {
+        sendT0 = MPI_Wtime();
+    }
 
+    MPI_Bcast(sendBuf_P, totalSize_P, MPI_FLOAT, root, MPI_COMM_WORLD);
+    
+    if (procID == root) {
+        double sendT1 = MPI_Wtime();
+        printf("Rank %d -> tempo de transmissão do conjunto P via MPI_Bcast = %.2f\n", procID, sendT1 - sendT0);
+    }
+
+    if (procID == root) {
+        sendT0 = MPI_Wtime();
+    }
     // enviando dados
     // ---- MPI_Scatter ----
     // Distribui o sendbuf do root para os buffers recvbuf_scatter de cada processo
@@ -110,7 +120,11 @@ int main(int argc, char** argv) {
                 MPI_FLOAT,    // Tipo de dado
                 root,       // Rank do processo root
                 MPI_COMM_WORLD);
-
+    
+    if (procID == root) {
+        double sendT1 = MPI_Wtime();
+        printf("Rank %d -> tempo de transmissão do conjunto Q via MPI_Scatter: %.2f s\n", procID, sendT1 - sendT0);
+    }
 
     #if PRINT_DATA 
         // imprime dados recebidos
@@ -136,16 +150,10 @@ int main(int argc, char** argv) {
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    chronoReset(&knnTime);
-    chronoStart(&knnTime);
-
+    double knnT0 = MPI_Wtime();
     result = knn(recvBufScatter_Q, numPoints, sendBuf_P, params[1], params[2], params[3]);
-
-    chronoStop(&knnTime);
-    //chronoReportTime(&knnTime, "knnTime");
-
-    double totalTimeInSeconds = (double)chronoGetTotal(&knnTime) / ((double)1000 * 1000 * 1000);
-    printf("Rank %d -> totalTimeInSeconds: %lf s\n", procID, totalTimeInSeconds);
+    double knnT1 = MPI_Wtime();
+    printf("Rank %d -> totalTimeInSeconds: %lf s\n", procID, knnT1 - knnT0);
 
     #if PRINT_DATA
         printf("Processo %d: k nearest neighbors (indices in P):\n", procID);
@@ -158,7 +166,10 @@ int main(int argc, char** argv) {
         printf("\n");
     #endif
     
-
+    double receiveT0 = 0;
+    if (procID != root) {
+        receiveT0 = MPI_Wtime();
+    }
     // depois de processados, envia os dados para o root
     // ---- MPI_Gather ----
     // Coleta os resultados de todos os processos para o recvBufGather_R no processo raiz
@@ -170,7 +181,12 @@ int main(int argc, char** argv) {
                MPI_INT,         // Tipo de dado
                root,            // Rank do processo root
                MPI_COMM_WORLD);
-
+    
+    if (procID != root) {
+        double receiveT1 = MPI_Wtime();
+        printf("Rank %d -> tempo de transmissão de result via MPI_Gather: %lf s\n", procID, receiveT1 - receiveT0);
+    }
+    
     #if PRINT_DATA
         // ---- Resultados ----
         if (procID == root) {

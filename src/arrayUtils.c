@@ -31,7 +31,7 @@ int *allocateZeroedIntArray(int numElements) {
         return NULL;
     }
 
-    memset(array, 0, sizeof(array));
+    memset(array, 0, numElements * sizeof(*array));
     
     return array;
 }
@@ -44,19 +44,17 @@ float *allocateZeroedFloatArray(int numElements) {
         return NULL;
     }
 
-    memset(array, 0, sizeof(array));
+    memset(array, 0, numElements * sizeof(*array));
     
     return array;
 }
 
 void geraConjuntoDeDados(float *C, int nc, int d) {
-
     //srand(time(NULL)); // mudar pra time
     
     for (int i = 0; i < nc * d; i++) {
-        C[i] = rand(); // numeros aleatorios entre 0 e RAND_MAX (2.147.483.647)
+        C[i] = rand() % 10; // numeros aleatorios entre 0 e RAND_MAX (2.147.483.647)
     }
-    
 }
 
 void destroyMatrix(void **matrix, int rows) {
