@@ -8,7 +8,7 @@
 #include "knn.h"
 #include "arrayUtils.h"
 
-#define PRINT_DATA 1
+#define PRINT_DATA 0
 
 int main(int argc, char** argv) {
     int nProc, procID;

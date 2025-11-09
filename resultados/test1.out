@@ -1,0 +1,40 @@
+-------- EXECUCAO 1 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.530322 s
+-------- EXECUCAO 2 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.595911 s
+-------- EXECUCAO 3 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.575789 s
+-------- EXECUCAO 4 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.530322 s
+-------- EXECUCAO 5 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.500686 s
+-------- EXECUCAO 6 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.573815 s
+-------- EXECUCAO 7 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.588700 s
+-------- EXECUCAO 8 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.567931 s
+-------- EXECUCAO 9 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.520614 s
+-------- EXECUCAO 10 --------
+Rank 0 -> tempo de transmissão do conjunto P via MPI_Bcast = 0.00
+Rank 0 -> tempo de transmissão do conjunto Q via MPI_Scatter: 0.00 s
+Rank 0 -> totalTimeInSeconds: 27.087606 s
