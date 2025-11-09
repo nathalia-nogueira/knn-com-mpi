@@ -13,15 +13,18 @@
 #include <mpi.h>
 #include "knn.h"
 #include "arrayUtils.h"
+#include "verificaKNN.c"
 
-#define PRINT_DATA 0
-#define PRINT_RESULT 0
+#define PRINT_DATA 0    // Imprime parametros e conjuntos recebidos por cada rank 
+#define PRINT_RESULT 0  // Imprime resultados de cada rank, e o vetor R após o gather
+#define PRINT_TIMES 1   // Imprime tempos de execução das funçoes
 
 int main(int argc, char** argv) {
 
     int nProc, procID;
     int root = 0;
     int params[4]; // Parametros da main
+    int param_v = 0;
     
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &nProc);
@@ -29,7 +32,8 @@ int main(int argc, char** argv) {
 
     // Verifica se os parametros estao todos corretos
     if (procID == root) {
-        if (argc != 5) {
+
+        if (argc < 5) {
             printf("Uso correto: mpirun -np 4 ./main nq=n1 npp=n2 d=n3 k=n4\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
@@ -51,7 +55,11 @@ int main(int argc, char** argv) {
                     params[2] = value;
                 else if (!strcmp(parameterName, "k"))
                     params[3] = value;
+            } else {
+                if (!strcmp(argv[i], "-v"))
+                    param_v = 1;
             }
+
             
         }
 
@@ -144,7 +152,7 @@ int main(int argc, char** argv) {
             for (int i = 0; i < totalSize_Q; i++) {
                 printf("%.2f ", sendBuf_Q[i]);
             }
-            printf("]\n");
+            printf("]\n\n");
         #endif
 
         
@@ -180,8 +188,10 @@ int main(int argc, char** argv) {
     MPI_Bcast(sendBuf_P, totalSize_P, MPI_FLOAT, root, MPI_COMM_WORLD);
     
     if (procID == root) {
-        double sendT1 = MPI_Wtime();
-        printf("Rank %d -> tempo de transmissão do conjunto P via MPI_Bcast = %lf\n", procID, sendT1 - sendT0);
+        sendT0 = MPI_Wtime() - sendT0;
+        #if PRINT_TIMES 
+            printf("Rank %d -> tempo de transmissão do conjunto P via MPI_Bcast = %lf\n", procID, sendT0);
+        #endif
     }
 
     // Mede o tempo de transmissão do conjunto Q
@@ -201,13 +211,15 @@ int main(int argc, char** argv) {
                 MPI_COMM_WORLD);
     
     if (procID == root) {
-        double sendT1 = MPI_Wtime();
-        printf("Rank %d -> tempo de transmissão do conjunto Q via MPI_Scatter: %lf s\n", procID, sendT1 - sendT0);
+        sendT0 = MPI_Wtime() - sendT0;
+        #if PRINT_TIMES 
+            printf("Rank %d -> tempo de transmissão do conjunto Q via MPI_Scatter: %lf s\n", procID, sendT0);
+        #endif
     }
 
     #if PRINT_DATA 
         // imprime dados recebidos
-        printf("Processo %d recebeu: parametros: nq= %d , npp= %d , d= %d , k= %d \n", procID, params[0], params[1], params[2], params[3]);
+        printf("Processo %d recebeu: parametros: nq= %d , npp= %d , d= %d , k= %d \n\n", procID, params[0], params[1], params[2], params[3]);
 
         printf("Processo %d recebeu: Q: \n", procID);
         for (int i = 0; i < numPoints; i++) {
@@ -234,8 +246,10 @@ int main(int argc, char** argv) {
     
     result = knn(recvBufScatter_Q, numPoints, sendBuf_P, params[1], params[2], params[3]);
     
-    double knnT1 = MPI_Wtime();
-    printf("Rank %d -> totalTimeInSeconds: %lf s\n", procID, knnT1 - knnT0);
+    knnT0 = MPI_Wtime() - knnT0;
+    #if PRINT_TIMES 
+        printf("Rank %d -> totalTimeInSeconds: %lf s\n", procID, knnT0);
+    #endif
 
     #if PRINT_RESULT
         printf("Processo %d: k vizinhos mais proximos (indices in P):\n", procID);
@@ -249,8 +263,7 @@ int main(int argc, char** argv) {
     #endif
     
     // Mede o tempo do gather dos resultados
-    double receiveT0 = 0;
-    receiveT0 = MPI_Wtime();
+    double receiveT0 = MPI_Wtime();
     
     // Coleta os resultados de todos os ranks para o root
     MPI_Gatherv(result,         // Buffer de envio (em todos os processos)
@@ -263,8 +276,10 @@ int main(int argc, char** argv) {
                root,            // Rank do processo root
                MPI_COMM_WORLD);
     
-    double receiveT1 = MPI_Wtime();
-    printf("Rank %d -> tempo de transmissão de result via MPI_Gather: %lf s\n", procID, receiveT1 - receiveT0);
+    receiveT0 = MPI_Wtime() - receiveT0;
+    #if PRINT_TIMES 
+        printf("Rank %d -> tempo de transmissão de result via MPI_Gather: %lf s\n", procID, receiveT0);
+    #endif
         
     #if PRINT_RESULT
         // ---- Resultados ----
@@ -276,6 +291,12 @@ int main(int argc, char** argv) {
             printf("]\n\n");
         }
     #endif
+
+    if (procID == root) {
+        if (param_v) {
+            verificaKNN(sendBuf_Q, params[0], sendBuf_P, params[1], params[2], params[3], recvBufGather_R);
+        }
+    }
 
     // Libera a memória
     if (procID == root) {
