@@ -55,7 +55,6 @@ float *allocateZeroedFloatArray(int numElements) {
 }
 
 void geraConjuntoDeDados(float *C, int nc, int d) {
-    //srand(time(NULL)); // mudar pra time
     
     for (int i = 0; i < nc * d; i++) {
         C[i] = rand(); // numeros aleatorios entre 0 e RAND_MAX (2.147.483.647)
