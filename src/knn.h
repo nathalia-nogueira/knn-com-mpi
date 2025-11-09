@@ -1,3 +1,8 @@
+/* Biblioteca com o algoritmo KNN
+ * Autoras:
+ * - Bianca Mendes Francisco
+ * - Nathália Nogueira Alves */
+
 #ifndef _KNN_
 #define _KNN_
 
@@ -7,14 +12,14 @@
 #include "maxHeap.h"
 #include "arrayUtils.h"
 
-/* Computes the k nearest neighbors of each point in Q with respect to P.
- * Parameters:
- * - Q: matrix of query points. Each row contains the coordinates of one point.
- * - nq: number of points in Q.
- * - P: matrix of reference points. The neighbors are searched within this set.
- * - np: number of points in P.
- * - d: dimensionality of the points.
- * - k: number of nearest neighbors to return.
+/* Calcula os k-vizinhos mais próximos de cada ponto de Q em P.
+ * Parametros:
+ * - Q: matriz principal. Cada linha contem as coordenadas de um ponto.
+ * - nq: numero de pontos em Q.
+ * - P: matriz de pontos de consulta. Os k-vizinhos são procurados neste conjunto.
+ * - np: numero de pontos em P.
+ * - d: dimensionalidade dos pontos.
+ * - k: numero de vizinhos retornados.
  */
 int *knn(float Q[], int nq, float P[], int np, int d, int k);
 

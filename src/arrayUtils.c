@@ -1,3 +1,8 @@
+/* Implementação de funções úteis para vetores
+ * Autoras:
+ * - Bianca Mendes Francisco
+ * - Nathália Nogueira Alves */
+
 #include "arrayUtils.h"
 
 int **allocateZeroedMatrix(int rows, int columns){

@@ -1,12 +1,17 @@
+/* Implementação do KNN
+ * Autoras:
+ * - Bianca Mendes Francisco
+ * - Nathália Nogueira Alves */
+
 #include "knn.h"
-/* -------------------------- Helper functions --------------------------*/
-// Computes the squared distance between two points
-float distanceSquared(float firstPoint[], float secondPoint[], int dimension) {
+/* -------------------------- Funções auxiliares --------------------------*/
+// Calcula a distância quadrática entre dois pontos
+float distanceSquared(float firstPoint[], float secondPoint[], int dimensionality) {
     float distance, diff;
 
     distance = 0;
     diff = 0;
-    for(int i = 0; i < dimension; i++) {
+    for(int i = 0; i < dimensionality; i++) {
         diff = secondPoint[i] - firstPoint[i]; 
         distance += diff * diff;
     }
@@ -15,7 +20,7 @@ float distanceSquared(float firstPoint[], float secondPoint[], int dimension) {
 }
 
 /* -------------------------- Core functions --------------------------*/
-// Computes the k nearest neighbors of each point in Q with respect to P.
+// Calcula os k-vizinhos mais próximos de cada ponto de Q em P..
 int *knn(float Q[], int nq, float P[], int np, int d, int k) {
     int *result = allocateZeroedIntArray(nq * k);
     float *heap;
@@ -32,8 +37,8 @@ int *knn(float Q[], int nq, float P[], int np, int d, int k) {
 
         qPoint = Q + i * d;
 
-        // If fewer than k points have been seen, insert into the heap.
-        // Once k points are stored, apply decreaseMax for each new point.
+        // Se menos de k pontos foram vistos, insere na heap.
+        // Quando k pontos já estão armazenados, aplica decreaseMax em cada um dos novos.
         for (int j = 0; j < np; j++) {
             pPoint = P + j * d;
 
@@ -46,7 +51,7 @@ int *knn(float Q[], int nq, float P[], int np, int d, int k) {
             }
         }
 
-        // Copy the k nearest neighbors of Q[i] to row i of the result matrix.
+        // Copia os k-vizinhos mais próximos de Q[i] para a linha i da matriz resultado
         for (int p = 0; p < heapSize; p++) {
             result[i * k + p] = heapIndices[p];
         }

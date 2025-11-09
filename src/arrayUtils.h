@@ -1,3 +1,8 @@
+/* Biblioteca de funções úteis para vetores
+ * Autoras:
+ * - Bianca Mendes Francisco
+ * - Nathália Nogueira Alves */
+
 #ifndef _ARRAY_UTILS_
 #define _ARRAY_UTILS_
 

@@ -1,4 +1,11 @@
-// mpirun -np 4 ./main nq=n1 npp=n2 d=n3 k=n4
+/* Função principal de KNN paralelizado com MPI
+ * Autoras:
+ * - Bianca Mendes Francisco
+ * - Nathália Nogueira Alves
+ *  
+ * Exemplo de linha de comando:
+ * mpirun -np 4 ./main nq=n1 npp=n2 d=n3 k=n4
+ * */
 
 #include <stdio.h>
 #include <stdlib.h>
