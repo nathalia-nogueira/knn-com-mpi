@@ -22,5 +22,7 @@ Em que:
 *d=n4 indica a dimensionalidade de cada um dos pontos
 *k=n5 indica quantos vizinhos devem ser retornados
 
+A opção -v na linha na linha de comando, caso utilizada, executa o algoritmo de verificação do knn fornecido pelo professor.
+
 Além disso, em /src/, existem scripts de teste prontos, que podem ser executados em ambiente linux com:
 `bash <nome_do_script>`
